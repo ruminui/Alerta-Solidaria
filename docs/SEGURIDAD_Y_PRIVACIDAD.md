@@ -36,3 +36,7 @@
 - [ ] Pruebas de usuario en Android/iPhone físicos, accesibilidad WCAG 2.2 AA.
 
 **Riesgo residual** de un sistema de emergencias incluso después del lanzamiento: siempre habrá lugares sin señal, fallos de baterías, retrasos y falta de personal. El producto no puede prometer un aviso universal ni una respuesta garantizada.
+
+## Auditoría de privacidad 0.3
+
+No se guardan coordenadas GPS exactas: cada nueva solicitud persiste posición redondeada y la migración trunca ubicaciones precisas de versiones anteriores. Los registros visibles vencidos se purgan también físicamente de la base activa, con periodicidad aproximada de hasta 5 minutos durante uso o al reiniciar. Eliminación de cuenta y exportación requieren token; eliminar exige contraseña. Los respaldos/WAL y copias externas requieren verificación de borrado independiente. **NO se afirma cumplimiento legal ni auditoría de seguridad de producción.** Falta moderación y respuesta de emergencias oficial.
