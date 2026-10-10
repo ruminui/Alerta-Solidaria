@@ -7,3 +7,6 @@ test('UI escapes user text via textContent',()=>{assert.match(js,/e\.textContent
 test('contains platform visual variants',()=>{assert.match(html,/id="theme"/);assert.match(fs.readFileSync('app/app.css','utf8'),/theme-ios/)});
 
 test('offline safety guide describes constraints',()=>{assert.match(html,/Plan rápido si se corta Internet/);assert.match(html,/datos sísmicos necesitan conexión/)});
+
+test('privacy controls expose export and account deletion safely',()=>{assert.match(html,/id="accountDialog"/);assert.match(js,/me\/export/);assert.match(js,/me\/delete/);assert.match(js,/auth\/logout/)});
+test('WhatsApp approximate location sharing',()=>{assert.match(js,/mapsLink\(Number\(state\.loc\.lat\.toFixed\(2\)\)/)});

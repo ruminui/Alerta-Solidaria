@@ -1,6 +1,6 @@
 # ALERTA SOLIDARIA · OPEN SOURCE
 
-**Versión:** 0.2.1 (kit de publicación) · **Fecha:** 2026-10-10 · **Estado: PILOTO LOCAL VALIDABLE — NO APTO PARA EMERGENCIAS REALES**
+**Versión:** 0.3.0 (auditoría de privacidad y entrega OEM) · **Fecha:** 2026-10-10 · **Estado: PILOTO LOCAL VALIDABLE — NO APTO PARA EMERGENCIAS REALES**
 
 Aplicación compartida con interfaz visual adaptada a iPhone y Samsung Galaxy. Mapa comunitario, solicitudes de ayuda y ofertas (donaciones e insumos), chat geográfico (mensajes visibles durante 24 h), plan offline de preparación, enlaces de WhatsApp y Google Maps, consulta del catálogo oficial de sismos de USGS. Independiente de Simworld: aprovecha sus patrones de mapa/social/tienda pero **no copia su repositorio, datos ni credenciales** y no modifica el proyecto original.
 
@@ -44,7 +44,7 @@ Prueba visual opcional: `python tests/browser_smoke.py` (requiere Playwright, Ch
 | USGS terremotos de magnitud ≥4,5 en últimas 24 horas, zona <1500 km | Integrado como **registro posterior**, no alerta temprana |
 | Dos estilos Galaxy/iPhone | Implementados en frontend compartido |
 | Registro/login, scrypt, token sesiones, reporte abuso | Implementado para piloto; necesita auditoría para producción |
-| Ubicación exacta oculta de vistas públicas | Implementado (redondeo ~1 km), almacenada en SQLite local (controlar acceso al servidor) |
+| Ubicación exacta oculta de vistas públicas | Implementado (redondeo ~1 km), sin GPS exacto en base activa; migración de coordenadas antiguas |
 | Push móvil, SMS / Cell Broadcast, sirena crítica, detección temprana | **NO implementado**. Requiere acuerdos/fuentes verificadas y capacidades del sistema |
 | APK / IPA listos para tiendas | **NO**. Se incluyen guías / puentes nativos, requieren build, firma y pruebas |
 | Grupo WhatsApp generado automáticamente | **NO**. Crear grupos arbitrarios no forma parte del enlace wa.me |
@@ -79,3 +79,11 @@ Los mensajes y ubicaciones que aparecen en la app son creados por usuarios del s
 ## Publicación independiente y feedback oficial
 
 La preparación para publicar el código experimental y los enlaces oficiales de feedback están en [`docs/PUBLICAR_GITHUB_Y_CONTACTAR.md`](docs/PUBLICAR_GITHUB_Y_CONTACTAR.md). Este paquete no se ha enviado a Apple o Samsung, no tiene relación con ellos y no es apto para uso en emergencias reales. Consulte `SECURITY.md` antes de contribuir.
+
+## Auditoría 0.3 — mejoras y límites
+
+- Los pedidos se purgan de la base activa a las 72 horas, chat a las 24 horas y reportes a los 30 días; las cuentas pueden durar hasta solicitud de eliminación. Las copias de seguridad requieren su propio ciclo de retención.
+- GPS: posiciones guardadas son aproximadas; datos anteriores se reducen al iniciar. Cuenta: exportar, cerrar sesión y borrar (con contraseña) desde la interfaz.
+- Endurecimiento: conexión SQLite cerrada, protección adicional Host/Origin, WebView Android sin archivo local ni HTTP mixto, enlaces externos filtrados y URL de USGS validada.
+- Manual de ingeniería OEM: [general](docs/OEM_INTEGRATION_MASTER_EN.md), [Apple](docs/APPLE_INTEGRATION_PLAYBOOK_EN.md), [Samsung](docs/SAMSUNG_INTEGRATION_PLAYBOOK_EN.md), [operador](docs/MANUAL_TECNICO_DESPLIEGUE_Y_PRUEBAS_ES.md) y [contacto](docs/ENTREGA_INSTITUCIONAL_Y_CONTACTO_EN.md).
+- `docs/RELEASE_GATE_STATUS.json` declara **NO_GO**. Sin app firmada, EEW oficial, autorización de fabricantes o despliegue 24/7.
