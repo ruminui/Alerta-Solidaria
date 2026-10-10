@@ -4,6 +4,7 @@ Python 3.11+ stdlib. Same-origin, opt-in and no public exact coordinates.
 from __future__ import annotations
 import hashlib, hmac, json, math, os, re, secrets, sqlite3, threading, time, urllib.request, uuid
 from collections import defaultdict, deque
+from contextlib import contextmanager
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -17,21 +18,31 @@ MAPS_KEY = os.environ.get('GOOGLE_MAPS_BROWSER_KEY', '').strip()
 MAX_BODY = 12_000
 POST_LIFETIME_SECONDS = 72 * 60 * 60
 CHAT_LIFETIME_SECONDS = 24 * 60 * 60
+REPORT_LIFETIME_SECONDS = 30 * 24 * 60 * 60
 KINDS = {'necesito', 'ofrezco'}
 CATEGORIES = {'rescate', 'agua', 'alimentos', 'medicamentos', 'refugio', 'transporte', 'donaciones', 'otros'}
 STATUS = {'abierto', 'resuelto'}
 lock = threading.Lock()
 rates = defaultdict(deque)
 quake_cache = {'until': 0, 'data': None}
+prune_due = 0
 USGS = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson'
 
 
+@contextmanager
 def connection():
     db = sqlite3.connect(DB, timeout=8)
-    db.row_factory = sqlite3.Row
-    db.execute('PRAGMA foreign_keys=ON')
-    db.execute('PRAGMA busy_timeout=8000')
-    return db
+    try:
+        db.row_factory = sqlite3.Row
+        db.execute('PRAGMA foreign_keys=ON')
+        db.execute('PRAGMA busy_timeout=8000')
+        yield db
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 
 def init_db():
@@ -59,6 +70,28 @@ def init_db():
         CREATE INDEX IF NOT EXISTS post_created_idx ON posts(created);
         CREATE INDEX IF NOT EXISTS chat_zone_idx ON chat(zone, created);
         ''')
+        db.execute('UPDATE posts SET latitude=public_lat, longitude=public_lon '
+                   'WHERE latitude!=public_lat OR longitude!=public_lon')
+        cleanup(db)
+
+
+def cleanup(db):
+    now=int(time.time())
+    db.execute('DELETE FROM posts WHERE created < ?', (now-POST_LIFETIME_SECONDS,))
+    db.execute('DELETE FROM chat WHERE created < ?', (now-CHAT_LIFETIME_SECONDS,))
+    db.execute('DELETE FROM reports WHERE created < ?', (now-REPORT_LIFETIME_SECONDS,))
+    db.execute('DELETE FROM sessions WHERE expires <= ?', (now,))
+
+
+def prune_expired():
+    global prune_due
+    now=time.monotonic()
+    with lock:
+        if now < prune_due:
+            return
+        with connection() as db:
+            cleanup(db)
+        prune_due=now+300
 
 
 def pass_hash(password, salt):
@@ -66,7 +99,7 @@ def pass_hash(password, salt):
 
 
 def public_location(value):
-    """Round to ~1 km grid. Exact coords stored privately but are not in API output."""
+    """Round to ~1 km grid. Exact coordinates are not persisted."""
     return round(float(value), 2)
 
 
