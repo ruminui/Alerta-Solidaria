@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.GeolocationPermissions
+import android.webkit.WebSettings
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -35,6 +36,9 @@ class MainActivity: Activity() {
         web = WebView(this)
         setContentView(web)
         val approved = Uri.parse(url).host
+        web.settings.allowFileAccess = false
+        web.settings.allowContentAccess = false
+        web.settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.settings.setGeolocationEnabled(true)
@@ -42,6 +46,7 @@ class MainActivity: Activity() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 if (uri.scheme == "https" && uri.host == approved) return false
+                if (uri.scheme !in listOf("https", "tel")) return true
                 return try { startActivity(Intent(Intent.ACTION_VIEW, uri)); true }
                        catch (_: Exception) { true }
             }
