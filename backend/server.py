@@ -214,7 +214,16 @@ class Handler(BaseHTTPRequestHandler):
             d.append(now)
             return False
 
+    def allowed_host(self):
+        if HOST not in ('127.0.0.1','localhost','::1'):
+            return True
+        name=urlparse('http://'+self.headers.get('Host','')).hostname
+        return name in ('127.0.0.1','localhost','::1')
+
     def do_GET(self):
+        if not self.allowed_host():
+            return self.send_json(403, {'error':'Host no permitido'})
+        prune_expired()
         url = urlparse(self.path)
         path = url.path
         if path == '/api/health':
@@ -224,6 +233,16 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/me':
             u = current_user(self.headers.get('Authorization'))
             return self.send_json(200, {'user': u})
+        if path == '/api/me/export':
+            u=self.auth()
+            if not u:
+                return
+            with connection() as db:
+                posts=[dict(r) for r in db.execute('SELECT id,kind,category,description,status,public_lat,public_lon,created FROM posts WHERE user_id=?',(u['id'],))]
+                chat=[dict(r) for r in db.execute('SELECT id,zone,body,created FROM chat WHERE user_id=?',(u['id'],))]
+                reports=[dict(r) for r in db.execute('SELECT id,target_type,target_id,reason,created FROM reports WHERE user_id=?',(u['id'],))]
+            return self.send_json(200, {'profile':u,'posts':posts,'chat':chat,'reports':reports,
+                'notice':'Descarga privada de tus datos. No compartir públicamente.'})
         if path == '/api/posts':
             with connection() as db:
                 rows = db.execute('''SELECT p.id,p.kind,p.category,p.description,p.status,p.public_lat AS lat,
@@ -255,6 +274,12 @@ class Handler(BaseHTTPRequestHandler):
         return self.send_json(404, {'error': 'No encontrado'})
 
     def do_POST(self):
+        if not self.allowed_host():
+            return self.send_json(403, {'error':'Host no permitido'})
+        prune_expired()
+        origin=self.headers.get('Origin')
+        if origin and urlparse(origin).netloc != self.headers.get('Host'):
+            return self.send_json(403, {'error':'Origen no permitido'})
         if self.limited():
             return self.send_json(429, {'error': 'Demasiadas solicitudes. Reintentá en un minuto.'})
         path = urlparse(self.path).path
@@ -284,6 +309,23 @@ class Handler(BaseHTTPRequestHandler):
             user = self.auth()
             if not user:
                 return
+            if path == '/api/auth/logout':
+                token=self.headers.get('Authorization','').split(' ',1)[-1]
+                with connection() as db:
+                    db.execute('DELETE FROM sessions WHERE hash=? AND user_id=?',(hashlib.sha256(token.encode()).hexdigest(),user['id']))
+                return self.send_json(200, {'logged_out':True})
+            if path == '/api/me/delete':
+                pwd=str(b.get('password',''))
+                with connection() as db:
+                    row=db.execute('SELECT salt,hash FROM users WHERE id=?',(user['id'],)).fetchone()
+                    if not row or not hmac.compare_digest(pass_hash(pwd,row['salt']),row['hash']):
+                        return self.send_json(403, {'error':'Contraseña incorrecta'})
+                    db.execute('DELETE FROM reports WHERE user_id=?',(user['id'],))
+                    db.execute('DELETE FROM chat WHERE user_id=?',(user['id'],))
+                    db.execute('DELETE FROM posts WHERE user_id=?',(user['id'],))
+                    db.execute('DELETE FROM sessions WHERE user_id=?',(user['id'],))
+                    db.execute('DELETE FROM users WHERE id=?',(user['id'],))
+                return self.send_json(200, {'deleted':True,'note':'Datos eliminados de base activa; respaldos requieren gestión independiente.'})
             if path == '/api/posts':
                 kind, cat = b.get('kind'), b.get('category')
                 desc = str(b.get('description', '')).strip()
@@ -292,7 +334,7 @@ class Handler(BaseHTTPRequestHandler):
                 lat, lon = check_coords(b.get('lat'), b.get('lon'))
                 ident = uuid.uuid4().hex
                 with connection() as db:
-                    db.execute('INSERT INTO posts VALUES(?,?,?,?,?,?,?,?,?,?,?)', (ident,user['id'],kind,cat,desc,'abierto',lat,lon,public_location(lat),public_location(lon),int(time.time())))
+                    db.execute('INSERT INTO posts VALUES(?,?,?,?,?,?,?,?,?,?,?)', (ident,user['id'],kind,cat,desc,'abierto',public_location(lat),public_location(lon),public_location(lat),public_location(lon),int(time.time())))
                     db.commit()
                 return self.send_json(201, {'id': ident, 'posted': True, 'public_location': 'aproximada', 'warning':'Esto NO contacta automáticamente a emergencias'})
             if path == '/api/chat':
