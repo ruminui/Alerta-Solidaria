@@ -1,0 +1,29 @@
+name: Alerta Solidaria - validacion piloto
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Tests servidor Python
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Tests interfaz
+        run: node --test tests/test_ui.cjs
+      - name: Sintaxis JavaScript
+        run: node --check app/app.js
+      - name: Verificar ausencia de base de datos en repositorio
+        run: |
+          if git ls-files | grep -E '(^|/)(alerta\.db|[^/]*\.sqlite3?|\.env)$'; then
+            echo 'Archivo privado detectado' >&2; exit 1
+          fi

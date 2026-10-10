@@ -1,0 +1,15 @@
+services:
+  pilot:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    environment:
+      # Acknowledge that this is a local test only, never a rescue service.
+      AS_REMOTE_PILOT_ACK: I_UNDERSTAND_NOT_FOR_EMERGENCIES
+    ports:
+      - "127.0.0.1:8765:8765"
+    volumes:
+      - as-data:/data
+    restart: unless-stopped
+volumes:
+  as-data:

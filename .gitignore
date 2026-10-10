@@ -1,0 +1,14 @@
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+alerta.db*
+__pycache__/
+*.pyc
+.env
+node_modules/
+.DS_Store
+build/
+.gradle/
+*.apk
+*.ipa

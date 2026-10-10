@@ -1,0 +1,223 @@
+{
+  "project": "ALERTA_SOLIDARIA_OPEN_SOURCE",
+  "version": "0.2.1",
+  "created_at": "2026-10-10",
+  "status": "SOURCE_RELEASE_CANDIDATE_ONLY_LOCAL_PILOT",
+  "source_open_release_ready": true,
+  "suitable_for_public_deployment": false,
+  "emergency_dispatch": false,
+  "early_warning": false,
+  "tests": "10 Python API + 6 Node UI tests PASS; JS syntax PASS (revalidated separately)",
+  "files": [
+    {
+      "path": ".github/workflows/pruebas.yml",
+      "bytes": 855,
+      "sha256": "a625d2f2855f4ad316a48ba0ea23a532a28f1f1dc88c6359aa29e341c5641001"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 132,
+      "sha256": "40ae61f1ced34e1e04577d54c46d1373bab9715c0b2cc7e292380b015195dd07"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1174,
+      "sha256": "0a92108a8321c779d95fd4db560766fef8f87409fe2284ebea742fe15e4a6e25"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1089,
+      "sha256": "f310a7185375e059f959d61df2e9f2aa3e24b931a070e26a9556851b704d64ce"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6598,
+      "sha256": "bca93988185e73aaaf6952e4c3adfe188f3cb1cc487f3ddf0aa00a9f32912e2c"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 1157,
+      "sha256": "478e63f25a68ee17a94d861213fde0cdfd289e577e9b469768cee665240975f4"
+    },
+    {
+      "path": "app/app.css",
+      "bytes": 10277,
+      "sha256": "197667481de8476697a1987155afb1be7d8ff14bdd8b42a483d223b982c618b1"
+    },
+    {
+      "path": "app/app.js",
+      "bytes": 14519,
+      "sha256": "3f618fae7c1ac180034cfa06ba56014381e1fa262c217d85bc17083e7942e2b9"
+    },
+    {
+      "path": "app/icon.svg",
+      "bytes": 353,
+      "sha256": "57778fe0d330d1d625f0e1e8c66c072b8e0a17220f8ce9ec043ff192399666ee"
+    },
+    {
+      "path": "app/index.html",
+      "bytes": 9806,
+      "sha256": "a92b643edc91a5dbc229e5457dba9cd8fcc4612ac0f255c24bfdc7e21b018768"
+    },
+    {
+      "path": "app/manifest.json",
+      "bytes": 377,
+      "sha256": "7848e25eb5a936db27bef7ebde37e09f1642389413076b252ad861545169b072"
+    },
+    {
+      "path": "app/sw.js",
+      "bytes": 651,
+      "sha256": "10de07d9238cb1d656604e35e90ac058653197f5de44636393811c8fbf3c0e5b"
+    },
+    {
+      "path": "backend/server.py",
+      "bytes": 16207,
+      "sha256": "92ab115066ec8656f8178704de70a34485e36e277ff247fa9a9816c2d5582824"
+    },
+    {
+      "path": "deploy/Dockerfile",
+      "bytes": 290,
+      "sha256": "b618899f5e7e97404a8324f0e9abb173d2125636c7850b3a1a9d3a96698c202f"
+    },
+    {
+      "path": "deploy/compose.yaml",
+      "bytes": 361,
+      "sha256": "505d064e36425740f76f992970b15ecf887affa146bbe5dbc0bbb5221f4e5ebe"
+    },
+    {
+      "path": "deploy/publicar_nuevo_repo.sh",
+      "bytes": 1150,
+      "sha256": "6611f5b41beb1e98e5ff6151ecbce1972d4cf0804713c1cd424bbb0e9046fcbb"
+    },
+    {
+      "path": "docs/ARQUITECTURA.md",
+      "bytes": 5164,
+      "sha256": "6fbfd09da00ef66bc474154e017cf958c7e8d625acb5204bc6b40569680f7287"
+    },
+    {
+      "path": "docs/CHECKPOINT_2026-10-10.md",
+      "bytes": 1470,
+      "sha256": "299a415acd69c5b4dc4e85d9f06769747ce4079e4336b1b8ae5cc900d3c0d723"
+    },
+    {
+      "path": "docs/CONTACTO_FABRICANTES.md",
+      "bytes": 2431,
+      "sha256": "2d83c32bcc2b3f3265f1a8d9b153d530a1fb7ad9dcd6387b5dfaf23add547ce8"
+    },
+    {
+      "path": "docs/ENSAYO_OPERATIVO.md",
+      "bytes": 2046,
+      "sha256": "0d5ddd2169ecd9be1d03e5e2ce68c8d9cb7fcbc2af24b021f608b2069415716a"
+    },
+    {
+      "path": "docs/ENVIO_ESTADO.md",
+      "bytes": 2505,
+      "sha256": "ba276343ba58933774299d8c3c816a40ff078268b5facec75c3f8915c9fdf07f"
+    },
+    {
+      "path": "docs/FEEDBACK_APPLE_PUBLICO_ES.md",
+      "bytes": 928,
+      "sha256": "7522a2a2fe4f01e135c529a87b76b445d3254948f8dd56cc73a2f491dbe56974"
+    },
+    {
+      "path": "docs/FEEDBACK_SAMSUNG_PUBLICO_ES.md",
+      "bytes": 966,
+      "sha256": "91efba63b9da84352adfcec2bd2fbed69644af20e9ee33121139d90640627821"
+    },
+    {
+      "path": "docs/HOJA_DE_RUTA.md",
+      "bytes": 2672,
+      "sha256": "40561de4a5cc98ae9aaa227a86b95d24ea254f397fca1882b6ff2144cbd44bb0"
+    },
+    {
+      "path": "docs/METODOS_ALERTA.md",
+      "bytes": 4618,
+      "sha256": "fe0b7bb715475e246ab083a565f46b59ba9dfe5783ad848c7f70a73ef2e3a29a"
+    },
+    {
+      "path": "docs/PITCH_APPLE_EN.md",
+      "bytes": 2199,
+      "sha256": "e76c9ea57a097883f4cdc0b29b08600134707b9094fc1ba4bda95580122860c6"
+    },
+    {
+      "path": "docs/PITCH_SAMSUNG_EN.md",
+      "bytes": 1709,
+      "sha256": "4a510f3a9e587e2db284e905bd9bcbd993173c283d9bde846716ca3baeb3427d"
+    },
+    {
+      "path": "docs/PUBLICAR_GITHUB_Y_CONTACTAR.md",
+      "bytes": 2616,
+      "sha256": "b998e3d65fe9ce8844541e0a73a992c8f4e85861e855f1b23965f4d677fc52cf"
+    },
+    {
+      "path": "docs/REGISTRO_ENTREGA.csv",
+      "bytes": 315,
+      "sha256": "5772b9c3ddb58aeb292bcc71fde61277cbb308e13102cfcb86d9c7e69da29128"
+    },
+    {
+      "path": "docs/SEGURIDAD_Y_PRIVACIDAD.md",
+      "bytes": 3865,
+      "sha256": "9f4182c623f352f8f1b508447d9f5196dbb9f12845335de0129c3607984ecfa3"
+    },
+    {
+      "path": "native/android/README.md",
+      "bytes": 1005,
+      "sha256": "4ab8118daebddb4d065b59b846ab2a8c9d4f539960e3d0294574bc509644bfc5"
+    },
+    {
+      "path": "native/android/app/build.gradle.kts",
+      "bytes": 678,
+      "sha256": "93cfdb520fec4ce34945322846963bae702b485f31a759d69e113dfea3ab5da8"
+    },
+    {
+      "path": "native/android/app/src/main/AndroidManifest.xml",
+      "bytes": 785,
+      "sha256": "5fe7aedd3590d15483f0dfc6405a83025a20e2c18b425b5b2828a411b6dbe368"
+    },
+    {
+      "path": "native/android/app/src/main/java/org/alertasolidaria/mobile/MainActivity.kt",
+      "bytes": 3517,
+      "sha256": "af490e5dafcc620abfba6c1f1638e63ac06aa01760726b039771f7bc5e1e5966"
+    },
+    {
+      "path": "native/android/build.gradle.kts",
+      "bytes": 142,
+      "sha256": "50425357e4449207a6e3098fa4f4dc66864a870859025051fc809589ddb858df"
+    },
+    {
+      "path": "native/android/settings.gradle.kts",
+      "bytes": 283,
+      "sha256": "8a48f2357806c86755e659d8b2e23e2e1a2fcd1c36fef314c20f57e83a3958b0"
+    },
+    {
+      "path": "native/ios/AlertaSolidaria/AlertaSolidariaApp.swift",
+      "bytes": 457,
+      "sha256": "7179d150aa971acb92597e0a1e39eb9ce3cd8c7af1e03b98c5793e337e221a11"
+    },
+    {
+      "path": "native/ios/AlertaSolidaria/CommunityWebView.swift",
+      "bytes": 2052,
+      "sha256": "8596cf091d2999aa3cb8bc1f32566716f2d3ec928ddbc718d013303e6e13ce8c"
+    },
+    {
+      "path": "native/ios/README.md",
+      "bytes": 1114,
+      "sha256": "5de2d0a4fe44aa7e5e3cee28ff5364ea394b82f219c1a4279a04aab3ab0256b3"
+    },
+    {
+      "path": "tests/browser_smoke.py",
+      "bytes": 2248,
+      "sha256": "374c9231a4e5a52b9f8fd212340b13f2088dd5c39e0f460e6aa6b225835d1f94"
+    },
+    {
+      "path": "tests/test_server.py",
+      "bytes": 6415,
+      "sha256": "a2ffdd9cb4142c2833e447aa9f1d2d13d3a8e98f281fc59b4e3dad463d69fb7e"
+    },
+    {
+      "path": "tests/test_ui.cjs",
+      "bytes": 1130,
+      "sha256": "ddd7bd50f0486f87326b03d830c7487395eeebced8b1ee0a4a07789cc7b1eccc"
+    }
+  ]
+}
