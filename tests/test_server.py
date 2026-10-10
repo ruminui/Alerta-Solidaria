@@ -129,6 +129,56 @@ class APITest(unittest.TestCase):
             self.assertEqual(r.headers['X-Robots-Tag'],'noindex, nofollow')
             self.assertIn('Plan rápido si se corta Internet', r.read().decode('utf-8'))
 
+    def test_10_precise_gps_not_persisted(self):
+        _,u=self.req('/api/auth/register',{'alias':'privacy_xyz','password':'LongStrongPass123!!'})
+        status,p=self.req('/api/posts',{'kind':'necesito','category':'agua','description':'Necesito un suministro de agua para prueba','lat':8.912345,'lon':-79.512345},u['token'])
+        self.assertEqual(status,201)
+        with server.connection() as db:
+            r=db.execute('SELECT latitude,longitude,public_lat,public_lon FROM posts WHERE id=?',(p['id'],)).fetchone()
+            self.assertEqual((r['latitude'],r['longitude']),(8.91,-79.51))
+            self.assertEqual(r['latitude'],r['public_lat'])
+
+    def test_11_export_and_delete(self):
+        _,u=self.req('/api/auth/register',{'alias':'delete_xyz','password':'LongStrongPass123!!'})
+        t=u['token']
+        self.assertEqual(self.req('/api/me/export')[0],401)
+        self.assertEqual(self.req('/api/me/export',token=t)[0],200)
+        self.assertEqual(self.req('/api/me/delete',{'password':'wrongPass___'},t)[0],403)
+        self.assertEqual(self.req('/api/me/delete',{'password':'LongStrongPass123!!'},t)[1]['deleted'],True)
+        self.assertIsNone(self.req('/api/me',token=t)[1]['user'])
+
+    def test_12_logout(self):
+        _,u=self.req('/api/auth/register',{'alias':'logout_xyz','password':'LongStrongPass123!!'})
+        t=u['token']
+        self.assertEqual(self.req('/api/auth/logout',{},t)[0],200)
+        self.assertIsNone(self.req('/api/me',token=t)[1]['user'])
+
+    def test_13_cleanup(self):
+        now=int(time.time())
+        with server.connection() as db:
+            db.execute('UPDATE posts SET created=?',(now-server.POST_LIFETIME_SECONDS-1,))
+            db.execute('UPDATE chat SET created=?',(now-server.CHAT_LIFETIME_SECONDS-1,))
+            server.cleanup(db)
+            self.assertEqual(db.execute('SELECT count(*) FROM posts').fetchone()[0],0)
+            self.assertEqual(db.execute('SELECT count(*) FROM chat').fetchone()[0],0)
+
+    def test_14_migration(self):
+        _,u=self.req('/api/auth/register',{'alias':'migrate_xyz','password':'LongStrongPass123!!'})
+        _,p=self.req('/api/posts',{'kind':'ofrezco','category':'agua','description':'Agua potable disponible para pruebas','lat':8.99122,'lon':-79.51322},u['token'])
+        with server.connection() as db:
+            db.execute('UPDATE posts SET latitude=8.99122, longitude=-79.51322 WHERE id=?',(p['id'],))
+        server.init_db()
+        with server.connection() as db:
+            r=db.execute('SELECT latitude,longitude FROM posts WHERE id=?',(p['id'],)).fetchone()
+            self.assertEqual((r['latitude'],r['longitude']),(8.99,-79.51))
+
+    def test_15_dns_rebinding_host_block(self):
+        req=Request(self.base+'/api/health',headers={'Host':'attacker.invalid'})
+        try:
+            with urlopen(req,timeout=5) as r: code=r.status
+        except HTTPError as e: code=e.code
+        self.assertEqual(code,403)
+
     def test_05_zone(self):
         self.assertEqual(server.zone(8.94,-79.54), '8.9,-79.5')
         self.assertEqual(server.public_location(-79.51234), -79.51)
