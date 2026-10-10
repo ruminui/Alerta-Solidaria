@@ -1,0 +1,14 @@
+{
+  "project": "Alerta Solidaria",
+  "date": "2026-10-10",
+  "classification": "LOCAL_RESEARCH_PILOT_ONLY",
+  "source": "https://github.com/ruminui/Alerta-Solidaria",
+  "early_warning": false,
+  "emergency_dispatch": false,
+  "manufacturer_acceptance": false,
+  "mobile_signed_builds": false,
+  "official_sources_for_EEW": false,
+  "independent_security_audit": false,
+  "internet_production_deployment": false,
+  "decision": "NO_GO"
+}
